@@ -1,4 +1,4 @@
-import { _decorator, Component, EventKeyboard, Input, input, KeyCode, Node, Vec2 } from 'cc';
+import { _decorator, Component, EventKeyboard, Input, input, KeyCode, Node, RigidBody, Vec2, Vec3 } from 'cc';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -6,9 +6,15 @@ export class Player extends Component {
 
     @property
     private speed: number = 5;
-    private movDir: Vec2 = Vec2.ZERO
+    @property
+    private moveForce: number = 5;
+    private movDir: Vec2 = new Vec2(0, 0);
+
+    private rgb:RigidBody = null;
 
     start() {
+        this.rgb = this.getComponent(RigidBody);
+
         console.log('Player script started.');
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
@@ -16,8 +22,9 @@ export class Player extends Component {
     }
 
     update(deltaTime: number) {
-         const currentPos = this.node.position;
-         this.node.setPosition(currentPos.x + this.movDir.x * this.speed * deltaTime, currentPos.y, currentPos.z + this.movDir.y * this.speed * deltaTime);
+         //const currentPos = this.node.position;
+         //this.node.setPosition(currentPos.x + this.movDir.x * this.speed * deltaTime, currentPos.y, currentPos.z + this.movDir.y * this.speed * deltaTime);
+        this.rgb.applyForce(new Vec3(this.movDir.x, 0, this.movDir.y).multiplyScalar(this.moveForce));
     }
 
     protected onDestroy(): void {
