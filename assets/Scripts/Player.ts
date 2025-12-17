@@ -23,9 +23,13 @@ export class Player extends Component {
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
         input.on(Input.EventType.KEY_PRESSING, this.onKeyPressing, this);
 
-        this.collider.on('onCollisionEnter', this.onCollisionEnter, this);
-        this.collider.on('onCollisionExit', this.onCollisionExit, this);
-        this.collider.on('onCollisionStay', this.onCollisionStay, this);
+        //this.collider.on('onCollisionEnter', this.onCollisionEnter, this);
+        //this.collider.on('onCollisionExit', this.onCollisionExit, this);
+        //this.collider.on('onCollisionStay', this.onCollisionStay, this);
+
+        this.collider.on(('onTriggerEnter'), this.onTriggerEnter, this);
+        this.collider.on(('onTriggerExit'), this.onTriggerExit, this);
+        this.collider.on(('onTriggerStay'), this.onTriggerStay, this);
     }
 
     update(deltaTime: number) {
@@ -39,9 +43,13 @@ export class Player extends Component {
         input.off(Input.EventType.KEY_UP, this.onKeyUp, this);
         input.off(Input.EventType.KEY_PRESSING, this.onKeyPressing, this);
 
-        this.collider.off('onCollisionEnter', this.onCollisionEnter, this);
-        this.collider.off('onCollisionExit', this.onCollisionExit, this);
-        this.collider.off('onCollisionStay', this.onCollisionStay, this);
+        //this.collider.off('onCollisionEnter', this.onCollisionEnter, this);
+        //this.collider.off('onCollisionExit', this.onCollisionExit, this);
+        //this.collider.off('onCollisionStay', this.onCollisionStay, this);
+
+        this.collider.off('onTriggerEnter', this.onTriggerEnter, this);
+        this.collider.off('onTriggerExit', this.onTriggerExit, this);
+        this.collider.off('onTriggerStay', this.onTriggerStay, this);
     }
 
     /**
@@ -110,5 +118,16 @@ export class Player extends Component {
 
     private onCollisionStay(event: ICollisionEvent) {
         //console.log('Player onCollisionStay', event);
+    }
+
+    private onTriggerEnter(event: ICollisionEvent) {
+        event.otherCollider.getComponent(Food)?.node.destroy();
+    }
+
+    private onTriggerExit(event: ICollisionEvent) {
+        //console.log('Player onTriggerExit', event);
+    }
+    private onTriggerStay(event: ICollisionEvent) {
+        //console.log('Player onTriggerStay', event);
     }
 }
