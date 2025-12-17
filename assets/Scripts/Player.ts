@@ -1,4 +1,5 @@
-import { _decorator, Component, EventKeyboard, Input, input, KeyCode, Node, RigidBody, Vec2, Vec3 } from 'cc';
+import { _decorator, Collider, Component, EventKeyboard, ICollisionEvent, Input, input, KeyCode, Node, RigidBody, Vec2, Vec3 } from 'cc';
+import { Food } from './Food';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -11,14 +12,20 @@ export class Player extends Component {
     private movDir: Vec2 = new Vec2(0, 0);
 
     private rgb:RigidBody = null;
+    private collider:Collider = null;
 
     start() {
         this.rgb = this.getComponent(RigidBody);
+        this.collider = this.getComponent(Collider);
 
         console.log('Player script started.');
         input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.on(Input.EventType.KEY_UP, this.onKeyUp, this);
         input.on(Input.EventType.KEY_PRESSING, this.onKeyPressing, this);
+
+        this.collider.on('onCollisionEnter', this.onCollisionEnter, this);
+        this.collider.on('onCollisionExit', this.onCollisionExit, this);
+        this.collider.on('onCollisionStay', this.onCollisionStay, this);
     }
 
     update(deltaTime: number) {
@@ -31,6 +38,10 @@ export class Player extends Component {
         input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
         input.off(Input.EventType.KEY_UP, this.onKeyUp, this);
         input.off(Input.EventType.KEY_PRESSING, this.onKeyPressing, this);
+
+        this.collider.off('onCollisionEnter', this.onCollisionEnter, this);
+        this.collider.off('onCollisionExit', this.onCollisionExit, this);
+        this.collider.off('onCollisionStay', this.onCollisionStay, this);
     }
 
     /**
@@ -85,5 +96,19 @@ export class Player extends Component {
 
     private onKeyPressing(event: EventKeyboard) {
 
+
+        
+    }
+
+    private onCollisionEnter(event: ICollisionEvent) {
+        event.otherCollider.getComponent(Food)?.node.destroy();
+    }
+
+    private onCollisionExit(event: ICollisionEvent) {
+        //console.log('Player onCollisionExit', event);
+    }
+
+    private onCollisionStay(event: ICollisionEvent) {
+        //console.log('Player onCollisionStay', event);
     }
 }
